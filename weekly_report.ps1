@@ -93,22 +93,25 @@ function Get-Category($issue) {
     return $rules.DEFAULT_CATEGORY
 }
 
-$installRoot = Split-Path $PSScriptRoot -Parent
+$installRoot = $PSScriptRoot
 $configPath = Join-Path $installRoot 'weekly_report.config.psd1'
 try {
     if (-not (Test-Path -LiteralPath $configPath -PathType Leaf)) {
-        throw '처음설정.cmd를 실행해 본인 설정을 만들어 주세요.'
+        throw 'weekly_report.config.psd1을 같은 폴더에 두고 본인 정보를 입력하세요.'
     }
     $config = Import-PowerShellDataFile -LiteralPath $configPath -ErrorAction Stop
     $rulesPath = Join-Path $installRoot 'weekly_report.rules.psd1'
     if (-not (Test-Path -LiteralPath $rulesPath -PathType Leaf)) {
-        throw '처음설정.cmd를 실행해 분류 규칙 파일을 만들어 주세요.'
+        throw 'weekly_report.rules.psd1을 같은 폴더에 두세요.'
     }
     $rules = Import-PowerShellDataFile -LiteralPath $rulesPath -ErrorAction Stop
     Assert-ReportRules $rules
     foreach ($key in @('EMAIL', 'TOKEN', 'NAME', 'DOMAIN', 'FOLDER_ID', 'SPACE_KEY')) {
         if ($config[$key] -isnot [string] -or [string]::IsNullOrWhiteSpace($config[$key])) {
             throw "설정값 '$key'이 없거나 비어 있습니다."
+        }
+        if ($config[$key] -match '^\[.*\]$') {
+            throw "설정값 '$key'의 대괄호 안내 문구를 본인 정보로 바꿔 주세요."
         }
     }
 } catch {

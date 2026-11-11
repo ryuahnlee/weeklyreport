@@ -1,6 +1,4 @@
-# Local account credentials and personal rules
-/weekly_report.config.psd1
-/weekly_report.rules.psd1
+# Generated files only. The supplied config is tracked: never commit real credentials.
 *.log
 *.bak
 *.tmp
