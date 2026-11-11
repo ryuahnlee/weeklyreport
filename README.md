@@ -8,6 +8,10 @@ Jira에서 내게 할당된 업무를 가져와 Confluence에 보고서를 만�
 위쪽 **Code → Download ZIP**을 누르고 압축을 완전히 풀어 원하는 위치에 두세요.
 예: `D:\Automation\WeeklyReport`
 
+GitHub ZIP을 풀면 폴더 이름에 `-main`이 붙습니다. 정상입니다. 압축을 푼 폴더 이름을 **`WeeklyReport`로 바꾸고** `D:\Automation` 안에 두면 아래 실행 명령을 그대로 사용할 수 있습니다.
+
+탐색기에서 `D:\Automation\WeeklyReport`를 열었을 때 바로 `weekly_report.ps1`이 보여야 합니다. 폴더 안에 `weeklyreport-main` 같은 폴더가 한 겹 더 들어 있지 않은지 확인하세요.
+
 아래 세 파일은 같은 폴더에 두세요.
 
 | 파일 | 용도 |
@@ -53,11 +57,28 @@ FOLDER_ID = '456789'
 
 저장할 때 파일 이름과 확장자는 그대로 두고 **UTF-8 BOM**으로 저장하세요. 이름에 작은따옴표가 들어가면 두 번 적습니다. 예: `'O''Brien'`.
 
-## 3. 사용하기
+## 3. PowerShell로 실행하기
 
 설정 파일을 저장하는 것만으로 보고서가 생성되거나 예약 작업이 등록되지는 않습니다.
 
-실제 실행은 **회사에서 허용한 PowerShell 실행 방법**을 사용하세요. 실행할 파일은 `weekly_report.ps1`입니다. 이미 등록한 예약 작업이 있다면 이 파일의 현재 경로를 지정해야 합니다.
+1. Windows **시작 메뉴**에서 `Windows PowerShell`을 검색해 엽니다. 관리자 권한으로 열 필요는 없습니다.
+2. 아래 명령을 복사해 붙여넣고 **Enter**를 누르세요.
+
+```powershell
+powershell.exe -NoProfile -File "D:\Automation\WeeklyReport\weekly_report.ps1"
+```
+
+3. 완료되면 화면에 나오는 보고서 주소를 열어 확인하세요. 실행 내역과 주소는 같은 폴더의 `weekly_report.log`에도 남습니다.
+
+**다른 위치에 저장했거나 폴더 이름을 바꾸지 않았다면** 명령 안의 경로를 실제 위치로 바꿔야 합니다. 예를 들어 폴더가 `D:\Automation\WeeklyReport-main`이면:
+
+```powershell
+powershell.exe -NoProfile -File "D:\Automation\WeeklyReport-main\weekly_report.ps1"
+```
+
+**“-File 매개 변수에 대한 인수가 없습니다” 또는 “파일이 없습니다”가 나오면** 실행 정책 문제가 아니라 파일 경로가 맞는지 먼저 확인하세요. 탐색기에서 `weekly_report.ps1`을 **Shift + 우클릭 → 경로로 복사**하고, `powershell.exe -NoProfile -File ` 뒤에 붙여넣어 실행할 수 있습니다. 경로 양쪽 큰따옴표는 유지하세요.
+
+이미 등록한 예약 작업이 있다면 이 파일의 현재 경로를 지정해야 합니다.
 
 이 배포본은 보안 정책을 변경하거나 자동으로 예약 작업을 등록하지 않습니다. 회사 정책상 실행이 막히면 설정을 우회하지 말고 담당자에게 확인하세요.
 
