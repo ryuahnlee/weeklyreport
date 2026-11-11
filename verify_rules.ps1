@@ -45,7 +45,7 @@ try {
 Assert-Equal (Get-ReportTaskName $PSScriptRoot) (Get-ReportTaskName $PSScriptRoot.ToUpperInvariant()) 'Stable task name'
 if ((Get-ReportTaskName $PSScriptRoot) -eq (Get-ReportTaskName (Join-Path $PSScriptRoot 'other'))) { throw 'FAIL: Separate task names' }
 
-$rules = Import-PowerShellDataFile -LiteralPath (Join-Path $PSScriptRoot 'weekly_report.rules.example.psd1')
+$rules = Import-PowerShellDataFile -LiteralPath (Join-Path $PSScriptRoot '기본설정/weekly_report.rules.psd1')
 Assert-ReportRules $rules
 $SERVER_ID = ''; $DOMAIN = 'https://example.atlassian.net'; $thisFri = '10/23'
 function New-Issue([string]$Key, [string]$Title, [string]$Project = 'DEMO') {

@@ -96,12 +96,12 @@ function Get-Category($issue) {
 $configPath = Join-Path $PSScriptRoot 'weekly_report.config.psd1'
 try {
     if (-not (Test-Path -LiteralPath $configPath -PathType Leaf)) {
-        throw 'weekly_report.config.example.psd1을 weekly_report.config.psd1로 복사하고 본인 정보를 입력하세요.'
+        throw '처음설정.cmd를 실행해 본인 설정을 만들어 주세요.'
     }
     $config = Import-PowerShellDataFile -LiteralPath $configPath -ErrorAction Stop
     $rulesPath = Join-Path $PSScriptRoot 'weekly_report.rules.psd1'
     if (-not (Test-Path -LiteralPath $rulesPath -PathType Leaf)) {
-        throw 'weekly_report.rules.example.psd1을 weekly_report.rules.psd1로 복사하고 분류 규칙을 설정하세요.'
+        throw '처음설정.cmd를 실행해 분류 규칙 파일을 만들어 주세요.'
     }
     $rules = Import-PowerShellDataFile -LiteralPath $rulesPath -ErrorAction Stop
     Assert-ReportRules $rules

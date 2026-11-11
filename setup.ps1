@@ -33,7 +33,7 @@ try {
     }
     $rulesPath = Join-Path $PSScriptRoot 'weekly_report.rules.psd1'
     if (-not (Test-Path -LiteralPath $rulesPath)) {
-        Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'weekly_report.rules.example.psd1') -Destination $rulesPath
+        Copy-Item -LiteralPath (Join-Path $PSScriptRoot '기본설정/weekly_report.rules.psd1') -Destination $rulesPath
     }
 
     Write-Host '수동 실행은 Confluence에 오늘 날짜의 보고서를 생성하며, 같은 제목이 있으면 본문 전체를 덮어씁니다.'

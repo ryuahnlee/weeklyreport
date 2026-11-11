@@ -60,7 +60,7 @@ GROUP_RULES = @(
 ## 설정 변경·업데이트·자동 실행 해제
 
 - **계정이나 저장 위치 변경:** `처음설정.cmd`를 다시 실행하고 기존 설정을 다시 입력하겠다는 질문에 `y`를 입력합니다. 분류 규칙은 유지합니다.
-- **업데이트:** 새 ZIP에서 프로그램 파일과 예시 파일만 기존 폴더에 덮어씁니다. 본인의 `weekly_report.config.psd1`, `weekly_report.rules.psd1`은 유지하세요. 설치 폴더를 옮기지 않으면 스케줄러를 다시 등록할 필요가 없습니다.
+- **업데이트:** 새 ZIP에서 프로그램 파일과 `기본설정` 폴더를 기존 폴더에 덮어씁니다. 실행 폴더의 본인 `weekly_report.config.psd1`, `weekly_report.rules.psd1`은 유지하세요. 설치 폴더를 옮기지 않으면 스케줄러를 다시 등록할 필요가 없습니다.
 - **폴더 이동:** Windows 작업 스케줄러에서 기존 작업을 삭제하고, 이동한 폴더에서 `처음설정.cmd`로 자동 실행을 다시 등록하세요.
 - **자동 실행 해제:** Windows 작업 스케줄러에서 설정 완료 시 표시된 `WeeklyReport-…` 작업을 사용 안 함으로 바꾸거나 삭제합니다. 이름은 설치 폴더마다 다릅니다. 기존에 직접 등록한 `WeeklyReport` 작업이 있다면 중복 실행을 막기 위해 별도로 해제하세요.
 
@@ -89,11 +89,13 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\weekly_report.ps1 -Pre
 | --- | --- |
 | `처음설정.cmd`, `setup.ps1`, `setup_helpers.ps1` | 개인 설정 생성, 주소 해석, 선택적 실행·스케줄러 등록 |
 | `지금실행.cmd`, `weekly_report.ps1` | 보고서 생성·갱신 |
-| `weekly_report.config.example.psd1` | 개인정보 없는 계정 설정 양식 |
-| `weekly_report.rules.example.psd1` | 공통 분류 예시 |
+| `기본설정/weekly_report.config.psd1` | 개인정보 없는 계정 설정 양식 |
+| `기본설정/weekly_report.rules.psd1` | 공통 분류 양식 |
 | `verify_rules.ps1` | 개인 설정 없이 오프라인 검증 |
 
-실제 개인 설정·개인 규칙·로그는 `.gitignore`로 제외합니다. 예시 파일에는 실제 토큰, 개인 이메일, 회사 주소, 저장 위치 ID를 넣지 마세요.
+파일명에 `.example`을 붙이지 않습니다. `기본설정` 폴더는 배포용 양식이며 직접 수정할 필요가 없습니다. `처음설정.cmd`가 실행 폴더에 실제 사용할 `weekly_report.config.psd1`, `weekly_report.rules.psd1`을 만듭니다. 수정은 실행 폴더의 파일에 하세요.
+
+실행 폴더의 개인 설정·개인 규칙·로그는 `.gitignore`로 제외합니다. `기본설정` 폴더에는 실제 토큰, 개인 이메일, 회사 주소, 저장 위치 ID를 넣지 마세요.
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\verify_rules.ps1
