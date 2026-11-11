@@ -3,17 +3,21 @@ $ErrorActionPreference = 'Stop'
 function Assert-Equal($Actual, $Expected, [string]$Label) {
     if ($Actual -cne $Expected) { throw "FAIL: $Label" }
 }
-foreach ($file in Get-ChildItem -LiteralPath $PSScriptRoot -Filter '*.ps1') {
+$repoRoot = Split-Path $PSScriptRoot -Parent
+foreach ($file in Get-ChildItem -LiteralPath $repoRoot -Filter '*.ps1' -Recurse) {
     $tokens = $null; $parseErrors = $null
     [Management.Automation.Language.Parser]::ParseFile($file.FullName, [ref]$tokens, [ref]$parseErrors) | Out-Null
     if ($parseErrors.Count) { throw "Syntax error in $($file.Name): $($parseErrors.Message -join ', ')" }
 }
 $tokens = $null; $parseErrors = $null
-$ast = [Management.Automation.Language.Parser]::ParseFile((Join-Path $PSScriptRoot 'weekly_report.ps1'), [ref]$tokens, [ref]$parseErrors)
+$ast = [Management.Automation.Language.Parser]::ParseFile((Join-Path $repoRoot 'app/weekly_report.ps1'), [ref]$tokens, [ref]$parseErrors)
 foreach ($fn in $ast.FindAll({param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst]}, $true)) {
     . ([scriptblock]::Create($fn.Extent.Text))
 }
-. (Join-Path $PSScriptRoot 'setup_helpers.ps1')
+$setupAst = [Management.Automation.Language.Parser]::ParseFile((Join-Path $repoRoot 'app/setup.ps1'), [ref]$tokens, [ref]$parseErrors)
+foreach ($fn in $setupAst.FindAll({param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst]}, $true)) {
+    . ([scriptblock]::Create($fn.Extent.Text))
+}
 
 $folder = ConvertFrom-ConfluenceUrl 'https://example.atlassian.net/wiki/spaces/~abc/folder/123?view=all'
 Assert-Equal $folder.Domain 'https://example.atlassian.net' 'Site from folder URL'
@@ -45,7 +49,11 @@ try {
 Assert-Equal (Get-ReportTaskName $PSScriptRoot) (Get-ReportTaskName $PSScriptRoot.ToUpperInvariant()) 'Stable task name'
 if ((Get-ReportTaskName $PSScriptRoot) -eq (Get-ReportTaskName (Join-Path $PSScriptRoot 'other'))) { throw 'FAIL: Separate task names' }
 
-$rules = Import-PowerShellDataFile -LiteralPath (Join-Path $PSScriptRoot '기본설정/weekly_report.rules.psd1')
+$rulesFile = Join-Path ([IO.Path]::GetTempPath()) ([IO.Path]::GetRandomFileName() + '.psd1')
+try {
+    Initialize-ReportRules $rulesFile
+    $rules = Import-PowerShellDataFile -LiteralPath $rulesFile
+} finally { if (Test-Path -LiteralPath $rulesFile) { Remove-Item -LiteralPath $rulesFile } }
 Assert-ReportRules $rules
 $SERVER_ID = ''; $DOMAIN = 'https://example.atlassian.net'; $thisFri = '10/23'
 function New-Issue([string]$Key, [string]$Title, [string]$Project = 'DEMO') {

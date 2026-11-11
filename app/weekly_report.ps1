@@ -93,13 +93,14 @@ function Get-Category($issue) {
     return $rules.DEFAULT_CATEGORY
 }
 
-$configPath = Join-Path $PSScriptRoot 'weekly_report.config.psd1'
+$installRoot = Split-Path $PSScriptRoot -Parent
+$configPath = Join-Path $installRoot 'weekly_report.config.psd1'
 try {
     if (-not (Test-Path -LiteralPath $configPath -PathType Leaf)) {
         throw '처음설정.cmd를 실행해 본인 설정을 만들어 주세요.'
     }
     $config = Import-PowerShellDataFile -LiteralPath $configPath -ErrorAction Stop
-    $rulesPath = Join-Path $PSScriptRoot 'weekly_report.rules.psd1'
+    $rulesPath = Join-Path $installRoot 'weekly_report.rules.psd1'
     if (-not (Test-Path -LiteralPath $rulesPath -PathType Leaf)) {
         throw '처음설정.cmd를 실행해 분류 규칙 파일을 만들어 주세요.'
     }
@@ -121,7 +122,7 @@ $DOMAIN    = $config.DOMAIN
 $SERVER_ID = $config.SERVER_ID
 $FOLDER_ID = $config.FOLDER_ID
 $SPACE_KEY = $config.SPACE_KEY
-$LOG_FILE  = "$PSScriptRoot\weekly_report.log"
+$LOG_FILE  = "$installRoot\weekly_report.log"
 
 # TLS 1.2 강제 적용 (PowerShell 5.1 기본값 TLS 1.0/1.1 → Confluence 연결 실패 방지)
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
